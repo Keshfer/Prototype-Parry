@@ -16,7 +16,6 @@ public class StateManager : MonoBehaviour
         State nextState = currentState?.RunCurrentState(); //if the currentState variable is not null, proceed with RunCurrentState(). If null, just ignore this line
         if(nextState != null)
         {
-            
             SwitchState(nextState);
         }
     }
