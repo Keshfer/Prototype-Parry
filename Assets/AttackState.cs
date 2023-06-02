@@ -14,19 +14,32 @@ public class AttackState : State
     public GameObject target;
     private Vector2 chargeDist;
     public float speed;
+    private FaceTarget faceTargetScript;
+    public StrafeDanceState strafeDance;
+    private bool hasLunged;
     private void Start()
     {
         isCharging = false;
         renderThrust = thrustObject.GetComponent<SpriteRenderer>();
         colliderThrust = thrustObject.GetComponent<CapsuleCollider2D>();
         rb = body.GetComponent<Rigidbody2D>();
+        faceTargetScript = body.GetComponent<FaceTarget>();
+        hasLunged = false;
         
     }
 
     public override State RunCurrentState()
     {
-        
-        if(!isCharging)
+        print("attack");
+        if(hasLunged)
+        {
+            hasLunged = false;
+            isCharging = false;
+            renderThrust.enabled = false;
+            colliderThrust.enabled = false;
+            return strafeDance;
+        }
+        if (!isCharging)
         {
             isCharging = true;
             StartCoroutine("Charging");
@@ -36,30 +49,39 @@ public class AttackState : State
             rb.velocity = chargeDist * Time.deltaTime;
         }
         return this;
+
     }
     private IEnumerator Charging()
     {
         yield return new WaitForSeconds(1);
         renderThrust.enabled = true;
         colliderThrust.enabled = true;
-
+        /*
         Vector2 targetVector = new Vector2(target.transform.position.x, body.transform.position.y);
         float distanceToTarget = targetVector.x - body.transform.position.x;
         if(distanceToTarget < 0) //body is ahead of target in world space
         {
-            chargeDist = -1 * transform.right * speed;
+            chargeDist = transform.right * speed;
         } else //body is behind the target in world space
         {
             chargeDist = transform.right * speed;
         }
+        */
+        chargeDist = transform.right * speed;
         isLunge = true;
-        print("Attack");
-        StartCoroutine("ChargeDuration");
+        //print("Attack");
+        yield return StartCoroutine("ChargeDuration");
     }
     private IEnumerator ChargeDuration()
     {
         yield return new WaitForSeconds(1);
+        rb.velocity = new Vector2(0, 0);
         isLunge = false;
-        print("lunge done");
+        renderThrust.enabled = false;
+        colliderThrust.enabled = false;
+        isCharging = false;
+        hasLunged = true;
+        
+        //print("lunge done");
     }
 }

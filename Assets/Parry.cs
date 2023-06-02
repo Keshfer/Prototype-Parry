@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class Parry : MonoBehaviour
 {
-    private bool IsParry;
+    private bool isParry;
     public GameObject player;
     public GameObject parryColliderObject;
     public GameObject parryColliderObjectUp;
@@ -19,7 +19,7 @@ public class Parry : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        IsParry = false;
+        isParry = false;
         parryCollider = parryColliderObject.GetComponent<CapsuleCollider2D>();
         parryColliderUp = parryColliderObjectUp.GetComponent<CapsuleCollider2D>();
         parryColliderDown = parryColliderObjectDown.GetComponent<CapsuleCollider2D>();
@@ -39,7 +39,7 @@ public class Parry : MonoBehaviour
     {
         if(context.performed)
         {
-            IsParry = true;
+            isParry = true;
             //Debug.Log("Parry activated");
             if(PlayerMovementScript.direction.y > 0)
             {
@@ -61,7 +61,7 @@ public class Parry : MonoBehaviour
     private IEnumerator ParryDuration()
     {
         yield return new WaitForSeconds(0.2f);
-        IsParry = false;
+        isParry = false;
         parryCollider.enabled = false;
         parryColliderUp.enabled = false;
         parryColliderDown.enabled = false;
@@ -73,15 +73,28 @@ public class Parry : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Enemy Projectile"))
         {
-            if(IsParry)
+            if(isParry)
             {
                 Vector2 direction = (other.gameObject.transform.position - player.transform.position).normalized;
                 MoveForward projectile = other.gameObject.GetComponent<MoveForward>();
                 Rigidbody2D projectileRb = other.gameObject.GetComponent<Rigidbody2D>();
                 projectile.speed = projectile.speed * 2;
                 projectile.enemydirection = direction;
-                Debug.Log("Deflected!");
+                //Debug.Log("Deflected!");
             }
         }
+        /*
+        if(other.gameObject.CompareTag("Enemy Attack"))
+        {
+            if(isParry)
+            {
+                SpriteRenderer attackRenderer = other.gameObject.GetComponent<SpriteRenderer>();
+                CapsuleCollider2D attackCollider = other.gameObject.GetComponent<CapsuleCollider2D>();
+                attackRenderer.enabled = false;
+                attackCollider.enabled = false;
+
+            }
+        }
+        */
     }
 }

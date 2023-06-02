@@ -15,6 +15,8 @@ public class StrafeDanceState : State
     private Vector2 strafeDist;
     private bool pause;
     public AttackState attack;
+    private FaceTarget faceTargetScript;
+    private bool isCooldown;
 
     public void Start()
     {
@@ -22,10 +24,14 @@ public class StrafeDanceState : State
         isStrafing = false;
         coroutineRunning = false;
         strafeDist = new Vector2(0, 0);
+        faceTargetScript = body.gameObject.GetComponent<FaceTarget>();
+        isCooldown = false;
     }
     public override State RunCurrentState()
     {
+        print("strafe");
         //StartCoroutine("Strafe");
+        faceTargetScript.FacetheTarget();
         Vector2 targetVector = new Vector2(target.transform.position.x, body.transform.position.y);
         float distance = Vector2.Distance(body.transform.position, targetVector);
         if(!coroutineRunning)
@@ -34,31 +40,38 @@ public class StrafeDanceState : State
             if (distance < minDistance)
             {
                 int randomAttack = Random.Range(0, 2);
-                print(randomAttack);
-                if(randomAttack == 1)
+                //print(randomAttack);
+                if(randomAttack == 1 && !isCooldown)
                 {
+                    randomAttack = 0;
+                    isStrafing = false;
+                    coroutineRunning = false;
+                    isCooldown = true;
+                    rb.velocity = Vector2.zero;
+                    StartCoroutine("Cooldown");
                     return attack;
                 }
                 //print("min");
-                float distanceToTarget = targetVector.x - body.transform.position.x;
+                /*float distanceToTarget = targetVector.x - body.transform.position.x;
                 if(distanceToTarget < 0) //body is ahead of target in world space
                 {
                     //print("ahead");
-                    strafeDist = transform.right * speed;
+                    strafeDist = -1 * transform.right * speed;
                 } else //body is behind target in world space
                 {
                     //print("behind");
-                    strafeDist = -1 * transform.right * speed;
+                    strafeDist = transform.right * speed;
                     //print(strafeDist);
-                }
-                
+                }*/
+                strafeDist = -1 * transform.right * speed;
+
                 isStrafing = true;
 
             }
             else if (distance > maxDistance)
             {
                 //print("max");
-                float distanceToTarget = targetVector.x - body.transform.position.x;
+                /*float distanceToTarget = targetVector.x - body.transform.position.x;
                 if(distanceToTarget < 0) //body is ahead of target in world space
                 {
                     strafeDist = -1 * transform.right * speed;
@@ -67,7 +80,9 @@ public class StrafeDanceState : State
                     strafeDist = transform.right * speed;
                     //print(strafeDist);
                 }
-                
+                */
+                strafeDist = transform.right * speed;
+
                 isStrafing = true;
             }
             
@@ -105,6 +120,12 @@ public class StrafeDanceState : State
     {
         yield return new WaitForSeconds(0.2f);
         pause = false;
+    }
+    private IEnumerator Cooldown()
+    {
+        print("cooldown active");
+        yield return new WaitForSeconds(5);
+        isCooldown = false;
     }
 
 
