@@ -8,6 +8,7 @@ public class StrafeDanceState : State
     private Rigidbody2D rb;
     public float minDistance;
     public float maxDistance;
+    public float outRange;
     public GameObject target;
     public float speed;
     private bool isStrafing;
@@ -16,6 +17,7 @@ public class StrafeDanceState : State
     private bool pause;
     public AttackState attack;
     private FaceTarget faceTargetScript;
+    public FollowState followScript;
     private bool isCooldown;
 
     public void Start()
@@ -29,14 +31,23 @@ public class StrafeDanceState : State
     }
     public override State RunCurrentState()
     {
-        print("strafe");
+        //print("strafe");
         //StartCoroutine("Strafe");
         faceTargetScript.FacetheTarget();
         Vector2 targetVector = new Vector2(target.transform.position.x, body.transform.position.y);
         float distance = Vector2.Distance(body.transform.position, targetVector);
         if(!coroutineRunning)
         {
-           
+           if(distance > outRange)
+           {
+                isStrafing = false;
+                coroutineRunning = false;
+                isCooldown = true;
+                rb.velocity = Vector2.zero;
+                print("follow");
+                return followScript;
+                
+           }
             if (distance < minDistance)
             {
                 int randomAttack = Random.Range(0, 2);
@@ -124,7 +135,7 @@ public class StrafeDanceState : State
     private IEnumerator Cooldown()
     {
         print("cooldown active");
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
         isCooldown = false;
     }
 

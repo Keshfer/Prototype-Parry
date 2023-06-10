@@ -9,6 +9,7 @@ public class Gravity : MonoBehaviour
     private float velocity;
     public Vector2 fallValue = new Vector2(0,0);
     private bool isFalling;
+    public bool applyGravity;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +24,11 @@ public class Gravity : MonoBehaviour
         if (isFalling)
         {
             fallValue = fallValue + new Vector2(0, velocity + (fallAccel * Time.deltaTime));
+        }
+        if(applyGravity)
+        {
+            
+            rb.velocity = fallValue;
         }
         
     }

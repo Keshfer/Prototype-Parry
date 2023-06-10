@@ -30,7 +30,7 @@ public class AttackState : State
 
     public override State RunCurrentState()
     {
-        print("attack");
+        //print("attack");
         if(hasLunged)
         {
             hasLunged = false;

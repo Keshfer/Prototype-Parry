@@ -44,11 +44,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 4888929231998827110}
-  minDistance: 5
-  maxDistance: 5
+  minDistance: 6
+  maxDistance: 6
+  outRange: 15
   target: {fileID: 0}
   speed: 1000
   attack: {fileID: 1589666305}
+  followScript: {fileID: 999447502}
 --- !u!1 &999447501
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,6 +99,51 @@ MonoBehaviour:
   minDistance: 5
   strafeDance: {fileID: 72232743}
   body: {fileID: 4888929231998827110}
+--- !u!1 &1262012111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1262012112}
+  - component: {fileID: 1262012113}
+  m_Layer: 0
+  m_Name: PatrolState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1262012112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262012111}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1731299019}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1262012113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262012111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0726be7f697facd419262d58b2518ce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  patrolA: {fileID: 0}
+  patrolB: {fileID: 0}
 --- !u!1 &1589666304
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,6 +191,7 @@ MonoBehaviour:
   thrustObject: {fileID: 4888929231916727238}
   target: {fileID: 0}
   speed: 2000
+  strafeDance: {fileID: 72232743}
 --- !u!1 &1731299018
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +222,7 @@ Transform:
   - {fileID: 999447503}
   - {fileID: 72232744}
   - {fileID: 1589666306}
+  - {fileID: 1262012112}
   m_Father: {fileID: 4888929231998827131}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -188,9 +237,10 @@ GameObject:
   - component: {fileID: 4888929231916727257}
   - component: {fileID: 4888929231916727259}
   - component: {fileID: 4888929231916727256}
+  - component: {fileID: 678559646}
   m_Layer: 0
   m_Name: Thrust
-  m_TagString: Untagged
+  m_TagString: Enemy Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -276,6 +326,19 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
+--- !u!114 &678559646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4888929231916727238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8be7e88c616670b4488c3737ad38d289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 4888929231998827110}
 --- !u!1 &4888929231998827110
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,5 +489,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c2ea0c6b23ff774dbcef8b30bc0169a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
+  body: {fileID: 4888929231998827110}
   target: {fileID: 0}
