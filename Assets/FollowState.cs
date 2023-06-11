@@ -12,6 +12,7 @@ public class FollowState : State
     public GameObject body;
     private FaceTarget faceTargetScript;
 
+
     private void Start()
     {
         faceTargetScript = body.GetComponent<FaceTarget>();
@@ -27,7 +28,8 @@ public class FollowState : State
         {
 
             faceTargetScript.FacetheTarget();
-            body.transform.position = Vector2.MoveTowards(body.transform.position, targetVector2, speed * Time.deltaTime);
+            velocity = transform.right * speed * Time.deltaTime;
+            //body.transform.position = Vector2.MoveTowards(body.transform.position, targetVector2, speed * Time.deltaTime);
             return this;
         } else
         {

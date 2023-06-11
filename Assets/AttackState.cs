@@ -17,6 +17,7 @@ public class AttackState : State
     private FaceTarget faceTargetScript;
     public StrafeDanceState strafeDance;
     private bool hasLunged;
+
     private void Start()
     {
         isCharging = false;
@@ -46,7 +47,8 @@ public class AttackState : State
         }
         if(isLunge)
         {
-            rb.velocity = chargeDist * Time.deltaTime;
+            velocity = chargeDist * Time.deltaTime; 
+            //rb.velocity = chargeDist * Time.deltaTime;
         }
         return this;
 
@@ -56,26 +58,15 @@ public class AttackState : State
         yield return new WaitForSeconds(1);
         renderThrust.enabled = true;
         colliderThrust.enabled = true;
-        /*
-        Vector2 targetVector = new Vector2(target.transform.position.x, body.transform.position.y);
-        float distanceToTarget = targetVector.x - body.transform.position.x;
-        if(distanceToTarget < 0) //body is ahead of target in world space
-        {
-            chargeDist = transform.right * speed;
-        } else //body is behind the target in world space
-        {
-            chargeDist = transform.right * speed;
-        }
-        */
         chargeDist = transform.right * speed;
         isLunge = true;
-        //print("Attack");
         yield return StartCoroutine("ChargeDuration");
     }
     private IEnumerator ChargeDuration()
     {
         yield return new WaitForSeconds(1);
-        rb.velocity = new Vector2(0, 0);
+        velocity = Vector2.zero;
+        //rb.velocity = new Vector2(0, 0);
         isLunge = false;
         renderThrust.enabled = false;
         colliderThrust.enabled = false;

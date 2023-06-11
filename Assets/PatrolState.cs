@@ -8,6 +8,7 @@ public class PatrolState : State
     public GameObject patrolB;
     private Collider2D colliderA;
     private Collider2D colliderB;
+
     
     public GameObject body;
     private Rigidbody2D rb;
@@ -78,7 +79,11 @@ public class PatrolState : State
             }
             if (!pause)
             {
-                rb.velocity = transform.right * speed * Time.deltaTime;
+                velocity = transform.right * speed * Time.deltaTime;
+                //rb.velocity = transform.right * speed * Time.deltaTime;
+            } else
+            {
+                velocity = new Vector2(0, 0);
             }
         }
     }
@@ -97,7 +102,8 @@ public class PatrolState : State
     private IEnumerator SwitchWait()
     {
         pause = true;
-        rb.velocity = new Vector2(0,0);
+        velocity = new Vector2(0, 0);
+        //rb.velocity = new Vector2(0,0);
         yield return new WaitForSeconds(2);
         //print("switch");
         SwitchPoints();

@@ -463,6 +463,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallAccel: -9.81
   fallValue: {x: 0, y: 0}
+  applyGravity: 0
+--- !u!114 &1888266033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1888266032, guid: e14f1d468c1a68e4180749b960e94e3e, type: 3}
+  m_PrefabInstance: {fileID: 4888929231202721097}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888266031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0af783eb6e0494e954905a19f13824, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1888266039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888266031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb77ad42b77f294c91869ae32d8036a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalMove: {x: 0, y: 0}
+  gravityScript: {fileID: 1888266032}
+  stateManagerScript: {fileID: 1888266033}
 --- !u!1 &2082284342 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1262012111, guid: e14f1d468c1a68e4180749b960e94e3e, type: 3}
@@ -495,6 +522,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1073980675}
+    - target: {fileID: 999447502, guid: e14f1d468c1a68e4180749b960e94e3e, type: 3}
+      propertyPath: speed
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 999447502, guid: e14f1d468c1a68e4180749b960e94e3e, type: 3}
       propertyPath: target
       value: 
