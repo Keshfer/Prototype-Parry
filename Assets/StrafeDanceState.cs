@@ -44,7 +44,6 @@ public class StrafeDanceState : State
                 coroutineRunning = false;
                 isCooldown = true;
                 rb.velocity = Vector2.zero;
-                print("follow");
                 return followScript;
                 
            }
@@ -113,7 +112,6 @@ public class StrafeDanceState : State
     }
     private IEnumerator Cooldown()
     {
-        print("cooldown active");
         yield return new WaitForSeconds(1);
         isCooldown = false;
     }

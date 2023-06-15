@@ -357,6 +357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallAccel: -9.81
   fallValue: {x: 0, y: 0}
+  applyGravity: 0
 --- !u!50 &8207082506397939545
 Rigidbody2D:
   serializedVersion: 4

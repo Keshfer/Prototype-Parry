@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4883f5a5e5c43f5408db7f1a6b0de1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
   body: {fileID: 4888929231998827110}
   minDistance: 6
   maxDistance: 6
@@ -94,8 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e3cc6627b8ab840b9cabac883707ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
   target: {fileID: 0}
-  speed: 10
+  speed: 1000
   minDistance: 5
   strafeDance: {fileID: 72232743}
   body: {fileID: 4888929231998827110}
@@ -109,6 +111,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1262012112}
   - component: {fileID: 1262012113}
+  - component: {fileID: 2082284343}
   m_Layer: 0
   m_Name: PatrolState
   m_TagString: Untagged
@@ -125,7 +128,7 @@ Transform:
   m_GameObject: {fileID: 1262012111}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.8549, y: 1.8549, z: 1.8549}
   m_Children: []
   m_Father: {fileID: 1731299019}
   m_RootOrder: 3
@@ -142,8 +145,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0726be7f697facd419262d58b2518ce0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
   patrolA: {fileID: 0}
   patrolB: {fileID: 0}
+  body: {fileID: 4888929231998827110}
+  speed: 1000
+  radius: 15
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  angle: 60
+--- !u!70 &2082284343
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262012111}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.5, y: 1}
+  m_Direction: 0
 --- !u!1 &1589666304
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,6 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc524d78dd899446bd6679374b09342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
   body: {fileID: 4888929231998827110}
   thrustObject: {fileID: 4888929231916727238}
   target: {fileID: 0}
@@ -353,6 +384,8 @@ GameObject:
   - component: {fileID: 4888929231998827130}
   - component: {fileID: 1888266032}
   - component: {fileID: 4930510510109446112}
+  - component: {fileID: 3444573808876321392}
+  - component: {fileID: 1888266039}
   m_Layer: 0
   m_Name: Thruster
   m_TagString: Untagged
@@ -442,7 +475,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -476,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0af783eb6e0494e954905a19f13824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: {fileID: 999447502}
+  currentState: {fileID: 1262012113}
 --- !u!114 &4930510510109446112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,3 +524,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 4888929231998827110}
   target: {fileID: 0}
+--- !u!114 &3444573808876321392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4888929231998827110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 598bb2b9da73f8f4bb6948913f5a7d98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fallAccel: -9.81
+  fallValue: {x: 0, y: 0}
+  applyGravity: 0
+--- !u!114 &1888266039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4888929231998827110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb77ad42b77f294c91869ae32d8036a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalMove: {x: 0, y: 0}
+  gravityScript: {fileID: 3444573808876321392}
+  stateManagerScript: {fileID: 1888266032}

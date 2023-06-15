@@ -13,12 +13,21 @@ public class PatrolState : State
     public GameObject body;
     private Rigidbody2D rb;
     private bool atA;
-
     public float speed;
     private bool directionDecided;
-
     private bool pause;
     private bool coroutineRunning;
+    private bool FOVCheckRunning;
+    public float radius;
+    public LayerMask targetMask;
+    public LayerMask obstructionMask;
+    [Range(0,360)]
+    public float angle;
+    public bool playerDetected;
+    public FollowState followState;
+    public GameObject player;
+    
+    
     private void Start()
     {
         atA = false;
@@ -28,10 +37,16 @@ public class PatrolState : State
         directionDecided = false;
         coroutineRunning = false;
         pause = false;
+        FOVCheckRunning = false;
+        playerDetected = false;
         StartCoroutine("Wait");
     }
     public override State RunCurrentState()
     {
+        if(!FOVCheckRunning)
+        {
+            StartCoroutine("FOVRoutine");
+        }
         if(atA)
         {
             ApproachPoint(patrolB);
@@ -40,7 +55,15 @@ public class PatrolState : State
             
             ApproachPoint(patrolA);
         }
-        return this;
+        if (playerDetected)
+        {
+            return followState;
+            
+        }
+        else
+        {
+            return this;
+        }
     }
 
     private void faceMovement(int sign)
@@ -117,10 +140,41 @@ public class PatrolState : State
         yield return new WaitForSeconds(0.2f);
         coroutineRunning = false;
     }
+    private IEnumerator FOVRoutine()
+    {
+        FOVCheckRunning = true;
+        yield return new WaitForSeconds(0.2f);
+        FOVCheck();
+        FOVCheckRunning = false;
+    }
+
+    private void FOVCheck()
+    {
+        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(body.transform.position, radius, targetMask);
+
+        if(colliderArray.Length != 0)
+        {
+            GameObject target = colliderArray[0].gameObject;
+            Vector2 directionToTarget = (target.transform.position - body.transform.position).normalized;
+
+            if(Vector2.Angle(body.transform.right, directionToTarget) < (angle / 2))
+            {
+                float distanceToTarget = Vector2.Distance(body.transform.position, target.transform.position);
+
+                if(!(Physics2D.Raycast(body.transform.position, directionToTarget, radius, obstructionMask)))
+                {
+                    //print("See player");
+                    playerDetected = true;
+                    
+                }
+            }
+        }
+
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("hit");
+        //print("hit");
         if (other.gameObject.Equals(patrolA) || other.gameObject.Equals(patrolB))
         {
             
