@@ -21,8 +21,8 @@ public class FOVEditor : Editor
             viewAngle2 = DirectionFromAngle(fov.transform.eulerAngles.z, fov.angle / 2);
         } else
         {
-            viewAngle1 = DirectionFromAngle(fov.transform.eulerAngles.z, (-fov.angle / 2) + 180);
-            viewAngle2 = DirectionFromAngle(fov.transform.eulerAngles.z, (fov.angle / 2) + 180);
+            viewAngle1 = Vector3.Reflect(DirectionFromAngle(fov.transform.eulerAngles.z, (-fov.angle / 2)), Vector3.right );
+            viewAngle2 = Vector3.Reflect(DirectionFromAngle(fov.transform.eulerAngles.z, (fov.angle / 2)), Vector3.right);
         }
         if(fov.playerDetected)
         {

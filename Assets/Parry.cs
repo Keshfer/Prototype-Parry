@@ -15,7 +15,7 @@ public class Parry : MonoBehaviour
     private CapsuleCollider2D parryCollider;
     private CapsuleCollider2D parryColliderUp;
     private CapsuleCollider2D parryColliderDown;
-
+    public bool parrySuccess;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +26,7 @@ public class Parry : MonoBehaviour
         parryCollider.enabled = false;
         parryColliderUp.enabled = false;
         parryColliderDown.enabled = false;
-        
+        parrySuccess = false;
     }
 
     // Update is called once per frame

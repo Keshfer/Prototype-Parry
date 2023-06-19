@@ -13,13 +13,20 @@ public class EnemyMove : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        gravityScript = gameObject.GetComponent<Gravity>();
     }
 
     // Update is called once per frame
     void Update()
     {
         currentState = stateManagerScript.currentState;
-        totalMove = gravityScript.fallValue + this.currentState.velocity;
+        if (gravityScript != null)
+        {
+            totalMove = gravityScript.fallValue + this.currentState.velocity;
+        } else
+        {
+            totalMove = this.currentState.velocity;
+        }
         rb.velocity = totalMove;
     }
 }

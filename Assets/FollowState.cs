@@ -8,7 +8,7 @@ public class FollowState : State
     public float speed;
     public float minDistance;
     private Vector2 targetVector2;
-    public StrafeDanceState strafeDance;
+    public State nextState;
     public GameObject body;
     private FaceTarget faceTargetScript;
 
@@ -16,6 +16,7 @@ public class FollowState : State
     private void Start()
     {
         faceTargetScript = body.GetComponent<FaceTarget>();
+        
     }
     public override State RunCurrentState()
     {
@@ -33,8 +34,9 @@ public class FollowState : State
             return this;
         } else
         {
-            return strafeDance;
+            return nextState;
         }
+        
 
     }
 

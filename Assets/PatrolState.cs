@@ -24,7 +24,7 @@ public class PatrolState : State
     [Range(0,360)]
     public float angle;
     public bool playerDetected;
-    public FollowState followState;
+    public State nextState;
     public GameObject player;
     
     
@@ -57,7 +57,8 @@ public class PatrolState : State
         }
         if (playerDetected)
         {
-            return followState;
+            return nextState;
+            
             
         }
         else
@@ -85,14 +86,14 @@ public class PatrolState : State
         {
             if (!directionDecided)
             {
-                if (directionalDist < 0) //body is ahead of point B in world space
+                if (directionalDist < 0) //body is ahead of point in world space
                 {
                     faceMovement(-1);
                     directionDecided = true;
                     
 
                 }
-                else //body is behind point B in world space
+                else //body is behind point in world space
                 {
                     faceMovement(1);
                     directionDecided = true;
@@ -102,7 +103,7 @@ public class PatrolState : State
             }
             if (!pause)
             {
-                velocity = transform.right * speed * Time.deltaTime;
+                velocity = body.transform.right * speed * Time.deltaTime;
                 //rb.velocity = transform.right * speed * Time.deltaTime;
             } else
             {
@@ -157,7 +158,7 @@ public class PatrolState : State
             GameObject target = colliderArray[0].gameObject;
             Vector2 directionToTarget = (target.transform.position - body.transform.position).normalized;
 
-            if(Vector2.Angle(body.transform.right, directionToTarget) < (angle / 2))
+            if(Vector2.Angle(gameObject.transform.right, directionToTarget) < (angle / 2))
             {
                 float distanceToTarget = Vector2.Distance(body.transform.position, target.transform.position);
 
@@ -175,13 +176,13 @@ public class PatrolState : State
     private void OnTriggerEnter2D(Collider2D other)
     {
         //print("hit");
-        if (other.gameObject.Equals(patrolA) || other.gameObject.Equals(patrolB))
+        if ((atA && other.gameObject.Equals(patrolB)) || (!atA && other.gameObject.Equals(patrolA)))
         {
             
             coroutineRunning = true;
             StartCoroutine("SwitchWait");
 
-        }
+        } 
         
     }
 }

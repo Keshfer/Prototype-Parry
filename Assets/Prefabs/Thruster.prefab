@@ -153,11 +153,14 @@ MonoBehaviour:
   radius: 15
   targetMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   angle: 60
+  playerDetected: 0
+  followState: {fileID: 999447502}
+  player: {fileID: 0}
 --- !u!70 &2082284343
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -370,6 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 4888929231998827110}
+  parrySuccess: 0
 --- !u!1 &4888929231998827110
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,7 +392,7 @@ GameObject:
   - component: {fileID: 1888266039}
   m_Layer: 0
   m_Name: Thruster
-  m_TagString: Untagged
+  m_TagString: Thruster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

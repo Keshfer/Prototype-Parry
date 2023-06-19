@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8207082504800164047}
   - component: {fileID: 8207082504800164046}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Parry Collider Down
   m_TagString: Parry
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8207082505087400290}
   - component: {fileID: 8207082505087400289}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Parry Collider
   m_TagString: Parry
   m_Icon: {fileID: 0}
@@ -72,8 +72,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8207082505087400291}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.55, y: 0, z: 0}
+  m_LocalScale: {x: 1.02, y: 1.02, z: 1.02}
   m_Children: []
   m_Father: {fileID: 8207082506397939541}
   m_RootOrder: 0
@@ -104,7 +104,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8207082505736450007}
   - component: {fileID: 8207082505736450006}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Parry Collider Up
   m_TagString: Parry
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 8207082506397939540}
   - component: {fileID: 8207082506397939545}
   - component: {fileID: 8207082506397939543}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}

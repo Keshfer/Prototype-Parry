@@ -8,6 +8,8 @@ TagManager:
   - Parry
   - Enemy Projectile
   - Enemy Attack
+  - Thruster
+  - Fly
   layers:
   - Default
   - TransparentFX

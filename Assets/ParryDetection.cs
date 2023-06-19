@@ -4,28 +4,41 @@ using UnityEngine;
 
 public class ParryDetection : MonoBehaviour
 {
-    private SpriteRenderer thrustRenderer;
-    private CapsuleCollider2D thrustCollider;
+    private SpriteRenderer attackRenderer;
+    private CapsuleCollider2D attackCollider;
     public GameObject body;
+    public bool parrySuccess;
 
     void Start()
     {
-        thrustCollider = gameObject.GetComponent<CapsuleCollider2D>();
-        thrustRenderer = gameObject.GetComponent<SpriteRenderer>();
+        parrySuccess = false;
+        attackCollider = gameObject.GetComponent<CapsuleCollider2D>();
+        attackRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
     public void OnTriggerEnter2D(Collider2D other)
     {
         if(other.CompareTag("Parry"))
         {
-            thrustCollider.enabled = false;
-            thrustRenderer.enabled = false;
+            parrySuccess = true;
+            StartCoroutine("parrySuccessDuration");
+            attackCollider.enabled = false;
+            attackRenderer.enabled = false;
             body.SetActive(false);
             //print("parried");
 
         } else if(other.CompareTag("Player"))
         {
-            other.gameObject.SetActive(false);
+            if(!parrySuccess)
+            {
+                other.gameObject.SetActive(false);
+            }
+            
             //print("dead");
         }
+    }
+    private IEnumerator parrySuccessDuration()
+    {
+        yield return new WaitForSeconds(0.2f);
+        parrySuccess = false;
     }
 }
