@@ -21,9 +21,13 @@ public class CircleState : State
     private float[] avoidDirections;
     private float[] interestWeight;
     private float[] interestDirections;
+    private float[] interestAvoidWeight;
+    private float[] interestAvoidDirections;
     private Vector2 targetCachedPosition;
     private Vector2 moveDirection;
     public float speed;
+    public float circleRadius;
+    private float[] netInterest;
     private void Start()
     {
         faceTargetScript = body.GetComponent<FaceTarget>();
@@ -66,8 +70,9 @@ public class CircleState : State
             }
             interestWeight = new float[8];
             interestDirections = CalculateTargetWeight(targetCachedPosition, interestWeight);
-
-            moveDirection = EnemyDirection(interestDirections, avoidDirections);
+            interestAvoidWeight = new float[8];
+            interestAvoidDirections = CalculateTargetAvoidWeight(targetCachedPosition, interestAvoidWeight);
+            moveDirection = EnemyDirection(interestDirections, avoidDirections, interestAvoidDirections);
             
             StartCoroutine("DetectWait");
         }
@@ -78,8 +83,8 @@ public class CircleState : State
 
     private void OnDrawGizmos()
     {
-        //Gizmos.color = Color.white;
-        //Gizmos.DrawWireSphere(body.transform.position, detectRadius);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(body.transform.position, detectRadius);
         
         if (obstacleArray != null)
         {
@@ -96,7 +101,7 @@ public class CircleState : State
             Gizmos.DrawSphere(targetCachedPosition, 0.5f);
 
         }
-
+        /*
         if (avoidDirections != null)
         {
             Gizmos.color = Color.blue;
@@ -111,6 +116,15 @@ public class CircleState : State
             for (int i = 0; i < interestDirections.Length; i++)
             {
                 Gizmos.DrawRay(gameObject.transform.position, Directions.EightDirections[i] * interestDirections[i]);
+            }
+        }
+        */
+        if(netInterest != null)
+        {
+            Gizmos.color = Color.green;
+            for(int i = 0; i < netInterest.Length; i++)
+            {
+                Gizmos.DrawRay(gameObject.transform.position, Directions.EightDirections[i] * netInterest[i]);
             }
         }
         if (interestDirections != null && avoidDirections != null)
@@ -188,16 +202,37 @@ public class CircleState : State
         }
         return returnArray;
     }
+    private float[] CalculateTargetAvoidWeight(Vector2 targetCachedPosition, float[] returnArray)
+    {
+        Vector2 position2D = new Vector2(body.transform.position.x, body.transform.position.y);
+        Vector2 directionToObject = targetCachedPosition - position2D;
+        float distanceToObject = directionToObject.magnitude;
 
-    private Vector2 EnemyDirection(float[] interest, float[] avoid)
+        float weight = (circleRadius - distanceToObject) / circleRadius;
+
+        Vector2 directionToObjectNormalized = directionToObject.normalized;
+        for(int i = 0; i < Directions.EightDirections.Count; i++)
+        {
+            float result = Vector2.Dot(directionToObjectNormalized, Directions.EightDirections[i]);
+            // 1 to excluding 0 is considered
+            if(result > 0)
+            {
+                returnArray[i] = result * weight;
+            }
+
+        }
+        return returnArray;
+    }
+
+    private Vector2 EnemyDirection(float[] interest, float[] avoid, float[] interestAvoid)
     {
         
-        float[] netInterest = new float[8];
+        netInterest = new float[8];
         //8 because there are 8 directions so 8 interest directions and 8 avoid directions
         for (int i = 0; i < 8; i++)
         {
-            netInterest[i] = Mathf.Clamp01(interest[i] - avoid[i]);
-            //Debug.Log(netInterest[i]);
+            netInterest[i] = Mathf.Clamp01(interest[i] - avoid[i] - interestAvoid[i]);
+            Debug.Log(netInterest[i]);
             
         }
         //getting highest interest direction
@@ -210,7 +245,7 @@ public class CircleState : State
         }
         
         netDirection.Normalize();
-        netDirection = Vector3.Cross(netDirection, Vector3.forward);
+        //netDirection = Vector3.Cross(netDirection, Vector3.forward);
 
         return netDirection;
     }
