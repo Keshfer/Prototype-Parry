@@ -24,6 +24,7 @@ public class CircleState : State
     private Vector2 targetCachedPosition;
     private Vector2 moveDirection;
     public float speed;
+    private bool reflect;
     private void Start()
     {
         faceTargetScript = body.GetComponent<FaceTarget>();
@@ -31,7 +32,7 @@ public class CircleState : State
         avoidWeight = new float[8];
         interestWeight = new float[8];
         colliderSize = gameObject.GetComponent<CircleCollider2D>().radius;
-        
+        reflect = false;
     }
     public override State RunCurrentState()
     {
@@ -68,7 +69,6 @@ public class CircleState : State
             interestDirections = CalculateTargetWeight(targetCachedPosition, interestWeight);
 
             moveDirection = EnemyDirection(interestDirections, avoidDirections);
-            
             StartCoroutine("DetectWait");
         }
         bodyRB.velocity = moveDirection * speed * Time.deltaTime;
@@ -78,8 +78,8 @@ public class CircleState : State
 
     private void OnDrawGizmos()
     {
-        //Gizmos.color = Color.white;
-        //Gizmos.DrawWireSphere(body.transform.position, detectRadius);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(body.transform.position, detectRadius);
         
         if (obstacleArray != null)
         {
@@ -198,28 +198,55 @@ public class CircleState : State
         {
             netInterest[i] = Mathf.Clamp01(interest[i] - avoid[i]);
             //Debug.Log(netInterest[i]);
-            
         }
         //getting highest interest direction
         Vector2 netDirection = Vector2.zero;
         for (int i = 0; i < 8; i++)
         {
             netDirection += Directions.EightDirections[i] * netInterest[i];
-            
-
         }
         
         netDirection.Normalize();
-        netDirection = Vector3.Cross(netDirection, Vector3.forward);
-
-        return netDirection;
+        Debug.DrawRay(body.transform.position, netDirection, Color.cyan);
+        Vector2 crossNetDirection = Vector3.Cross(netDirection, Vector3.forward);
+        //Debug.Log(netDirection.magnitude);
+        if (reflect)
+        {
+            Debug.Log("reflected");
+            crossNetDirection = ShapingCross(crossNetDirection, targetCachedPosition);
+        }
+        for (int i = 0; i < Directions.EightDirections.Count; i++)
+        {
+            float result = Vector2.Dot(crossNetDirection, Directions.EightDirections[i] * avoid[i]);
+            if (result >= 0.9)
+            {
+                
+                if (!reflect)
+                {
+                    reflect = true;
+                } else
+                {
+                    reflect = false;
+                }
+            }
+        }
+        
+        return crossNetDirection;
     }
-
-    private float ShapingWeight(float dot)
+    //reflects the cross product calculations along the target vector line
+    private Vector2 ShapingCross(Vector2 cross, Vector2 targetCachedPosition)
     {
-        float weight = 1 - Mathf.Abs(dot - 0.65f);
-        return 0;
+        Vector2 newCross = cross;
+        Vector2 position2D = new Vector2(body.transform.position.x, body.transform.position.y);
+        Vector2 targetVector = targetCachedPosition - position2D;
+        Vector2 normalTargetVector = Quaternion.AngleAxis(90, Vector3.forward) * targetVector;
+        newCross = Vector2.Reflect(cross, normalTargetVector);
+        newCross = newCross.normalized;
+
+        return newCross;
     }
+
+
     public static class Directions
     {
         public static List<Vector2> EightDirections = new List<Vector2>
