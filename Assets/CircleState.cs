@@ -19,12 +19,16 @@ public class CircleState : State
     private float colliderSize;
     private float[] avoidWeight;
     private float[] avoidDirections;
+    private float[] avoidEnemyDirections;
     private float[] interestWeight;
     private float[] interestDirections;
+    private float[] crossDirectionArrayWeights;
     private Vector2 targetCachedPosition;
     private Vector2 moveDirection;
     public float speed;
     private bool reflect;
+    public bool move;
+    public float angleWeight;
     private void Start()
     {
         faceTargetScript = body.GetComponent<FaceTarget>();
@@ -33,6 +37,7 @@ public class CircleState : State
         interestWeight = new float[8];
         colliderSize = gameObject.GetComponent<CircleCollider2D>().radius;
         reflect = false;
+        crossDirectionArrayWeights = new float[8];
     }
     public override State RunCurrentState()
     {
@@ -63,21 +68,24 @@ public class CircleState : State
             if (obstacleArray != null)
             {
 
-                avoidDirections = CalculateWeight(obstacleArray, avoidWeight);
+                (avoidDirections, avoidEnemyDirections) = CalculateWeight(obstacleArray);
             }
             interestWeight = new float[8];
             interestDirections = CalculateTargetWeight(targetCachedPosition, interestWeight);
 
-            moveDirection = EnemyDirection(interestDirections, avoidDirections);
+            moveDirection = EnemyDirection(interestDirections, avoidDirections, avoidEnemyDirections);
             StartCoroutine("DetectWait");
         }
-        bodyRB.velocity = moveDirection * speed * Time.deltaTime;
-
+        if (move)
+        {
+            bodyRB.velocity = moveDirection * speed * Time.deltaTime;
+        }
         return this;
     }
 
     private void OnDrawGizmos()
     {
+        /*
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(body.transform.position, detectRadius);
         
@@ -89,14 +97,15 @@ public class CircleState : State
                 Gizmos.DrawSphere(obstacle.transform.position, 0.5f);
             }
         }
-        
+        */
+        /*
         if (targetCachedPosition != null)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(targetCachedPosition, 0.5f);
 
         }
-
+        
         if (avoidDirections != null)
         {
             Gizmos.color = Color.blue;
@@ -105,6 +114,8 @@ public class CircleState : State
                 Gizmos.DrawRay(gameObject.transform.position, Directions.EightDirections[i] * avoidDirections[i]);
             }
         }
+        
+
         if (interestDirections != null)
         {
             Gizmos.color = Color.green;
@@ -113,57 +124,81 @@ public class CircleState : State
                 Gizmos.DrawRay(gameObject.transform.position, Directions.EightDirections[i] * interestDirections[i]);
             }
         }
+        */
         if (interestDirections != null && avoidDirections != null)
         {
             
             Gizmos.color = Color.yellow;
             Gizmos.DrawRay(gameObject.transform.position, moveDirection);
         }
-
+        
+        if (avoidEnemyDirections != null)
+        {
+            
+            Gizmos.color = Color.white;
+            for (int i = 0; i < crossDirectionArrayWeights.Length; i++)
+            {
+                Gizmos.DrawRay(gameObject.transform.position, Directions.EightDirections[i] * crossDirectionArrayWeights[i] * 5);
+            }
+        }
 
     }
     private IEnumerator DetectWait()
     {
         coroutineRunning = true;
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.02f);
         coroutineRunning = false;
     }
 
-    private float[] CalculateWeight(Collider2D[] array, float[] returnArray)
+    private (float[], float[]) CalculateWeight(Collider2D[] array)
     {
+        float[] avoidArray = new float[8];
         Vector2 position2D = new Vector2(body.transform.position.x, body.transform.position.y);
+        float[] returnEnemyArray = new float[8];
         foreach (Collider2D thingCollider in array)
         {
             Vector2 directionToObject = thingCollider.ClosestPoint(body.transform.position) - position2D;
             float distanceToObject = directionToObject.magnitude;
             float weight;
-
             if (distanceToObject <= colliderSize) // prevents being too close to obstacle
             {
-                
+
                 weight = 1;
+                //Debug.Log("touching");
             }
             else
             {
                 weight = (detectRadius - distanceToObject) / detectRadius; // less than 1
             }
 
-
             Vector2 directionToObjectNormalized = directionToObject.normalized;
+            
             for (int i = 0; i < Directions.EightDirections.Count; i++)
             {
+                
                 float result = Vector2.Dot(directionToObjectNormalized, Directions.EightDirections[i]);
                 float finalWeightValue = result * weight;
-                
-                //replace weight value in i slot if new weight value is higher. Sometimes there are two colliders in the same direction with one being closer.
-                if (finalWeightValue > returnArray[i])
+                if (thingCollider.CompareTag("Enemy"))
                 {
-                    returnArray[i] = finalWeightValue;
+                    if (finalWeightValue > returnEnemyArray[i])
+                    {
+                        returnEnemyArray[i] = finalWeightValue;
+                    }
+                    //Debug.Log(body.name + " " + returnEnemyArray[i]);
+                }
+                else
+                {
+                    //replace weight value in i slot if new weight value is higher. Sometimes there are two colliders in the same direction with one being closer.
+                    if (finalWeightValue > avoidArray[i])
+                    {
+                        avoidArray[i] = finalWeightValue;
+                    }
                 }
             }
         }
-        return returnArray;
+        return (avoidArray, returnEnemyArray);
     }
+
 
 
     //no collider array needed since game will only have one target: the player
@@ -188,9 +223,21 @@ public class CircleState : State
         }
         return returnArray;
     }
+    // I want the fly to
+    //1)change directions to avoid obstacles (done)
+    //2)manuever around fellow enemies at an angle
+    //3)angle towards the targte if target is a little far away
+    //4) return to follow state if target too far away
 
-    private Vector2 EnemyDirection(float[] interest, float[] avoid)
+    // ****** ANGLE THE NET DIRECTION BY REDUCING OR INCREASING THE AVOIDENEMYDIRECTION'S MAGNITUDE **********
+    
+    private Vector2 EnemyDirection(float[] interest, float[] avoid, float[] avoidEnemy)
     {
+        float temp = 0;
+        Vector2 position2D = new Vector2(body.transform.position.x, body.transform.position.y);
+        Vector2 directionToObject = targetCachedPosition - position2D;
+        Vector2 targetDirection = directionToObject.normalized;
+        targetDirection.Normalize();
         
         float[] netInterest = new float[8];
         //8 because there are 8 directions so 8 interest directions and 8 avoid directions
@@ -206,19 +253,24 @@ public class CircleState : State
             netDirection += Directions.EightDirections[i] * netInterest[i];
         }
         
-        netDirection.Normalize();
-        Debug.DrawRay(body.transform.position, netDirection, Color.cyan);
-        Vector2 crossNetDirection = Vector3.Cross(netDirection, Vector3.forward);
+
+        Debug.DrawRay(body.transform.position, targetDirection, Color.cyan);
+        Vector2 crossNetDirection = Vector3.Cross(targetDirection, Vector3.forward); // has magnitude of 1
         //Debug.Log(netDirection.magnitude);
         if (reflect)
         {
-            Debug.Log("reflected");
+            
             crossNetDirection = ShapingCross(crossNetDirection, targetCachedPosition);
         }
+        float[] avoidEnemyResult = new float[8];
+        Vector2 avoidEnemyDirection = Vector2.zero;
+        float avoidEnemyWeight = 0f;
+        crossDirectionArrayWeights = new float[8];
+        //If any of the 8 directions are greater than the number in the if statement, switch the crossNetDirection
         for (int i = 0; i < Directions.EightDirections.Count; i++)
         {
-            float result = Vector2.Dot(crossNetDirection, Directions.EightDirections[i] * avoid[i]);
-            if (result >= 0.9)
+            float avoidResult = Vector2.Dot(crossNetDirection, Directions.EightDirections[i] * avoid[i]);
+            if (avoidResult >= 0.9)
             {
                 
                 if (!reflect)
@@ -229,9 +281,37 @@ public class CircleState : State
                     reflect = false;
                 }
             }
+            
+            
+            float avoidEnemyResultTemp = Vector2.Dot(crossNetDirection, Directions.EightDirections[i] * avoidEnemy[i]);
+            //if statement only includes directions that in the same semi circle as the crossNetDirection and the direction of avoidEnemy
+            // put in avoidEnemyResult array if the dot product is greater than 0.2 (0.2 instead of 0 so that directions REALLy close to 0 isn't included)
+            if (avoidEnemyResultTemp > 0)
+            {
+
+                //how do I teach the computer to shape the weights by itself?
+                crossDirectionArrayWeights[i] = 1f - Mathf.Abs(avoidEnemy[i] - 0.65f);
+                
+                
+                
+                
+            }
+            Debug.Log("angleWeight: " + angleWeight);
+            
+            if (avoidEnemyWeight < crossDirectionArrayWeights[i])
+            {
+                avoidEnemyWeight = crossDirectionArrayWeights[i];
+                avoidEnemyDirection = avoidEnemyWeight * Directions.EightDirections[i];
+                
+                temp = avoidEnemyWeight;
+            } 
         }
+        //Debug.Log("Best avoid EnemyDirection " + temp + " " + body.name);
+        Debug.DrawRay(gameObject.transform.position, crossNetDirection, Color.green);
+        Debug.DrawRay(gameObject.transform.position, avoidEnemyDirection, Color.cyan);
+        return (crossNetDirection + avoidEnemyDirection).normalized;
         
-        return crossNetDirection;
+        
     }
     //reflects the cross product calculations along the target vector line
     private Vector2 ShapingCross(Vector2 cross, Vector2 targetCachedPosition)
@@ -259,6 +339,29 @@ public class CircleState : State
             new Vector2(-1,-1).normalized,
             new Vector2(0,-1).normalized,
             new Vector2(1,-1).normalized,
+
+        };
+    }
+    public static class MoreDirections
+    {
+        public static List<Vector2> SixteenDirections = new List<Vector2>
+        {
+            new Vector2(1,0).normalized,
+            new Vector2(1, 0.5f).normalized,
+            new Vector2(1,1).normalized,
+            new Vector2(0.5f,1).normalized,
+            new Vector2(0,1).normalized,
+            new Vector2(-0.5f,1).normalized,
+            new Vector2(-1,1).normalized,
+            new Vector2(-1,0.5f).normalized,
+            new Vector2(-1,0).normalized,
+            new Vector2(-1,-0.5f).normalized,
+            new Vector2(-1,-1).normalized,
+            new Vector2(-0.5f,-1).normalized,
+            new Vector2(0,-1).normalized,
+            new Vector2(0.5f, -1).normalized,
+            new Vector2(1,-1).normalized,
+            new Vector2(1, -0.5f).normalized,
 
         };
     }

@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0af783eb6e0494e954905a19f13824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: {fileID: 497552995403929450}
+  currentState: {fileID: 497552995423513149}
 --- !u!114 &497552994953656149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
-  nextState: {fileID: 0}
+  nextState: {fileID: 497552995423513149}
   body: {fileID: 497552994953656151}
   target: {fileID: 0}
   detectRadius: 10
@@ -227,6 +227,7 @@ MonoBehaviour:
   sightMask:
     serializedVersion: 2
     m_Bits: 72
+  circleRange: 6
   speed: 250
 --- !u!58 &497552995403929449
 CircleCollider2D:
@@ -254,6 +255,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497552995423513150}
   - component: {fileID: 497552995423513149}
+  - component: {fileID: 1769383781}
   m_Layer: 0
   m_Name: CircleState
   m_TagString: Untagged
@@ -287,6 +289,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3731fac8f41c6e64d8e2795b471fa2e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
+  nextState: {fileID: 0}
+  body: {fileID: 497552994953656151}
+  target: {fileID: 0}
+  detectRadius: 10
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 192
+  sightMask:
+    serializedVersion: 2
+    m_Bits: 72
+  speed: 250
+  move: 1
+--- !u!58 &1769383781
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497552995423513151}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 3
 --- !u!1 &497552995842418864
 GameObject:
   m_ObjectHideFlags: 0
