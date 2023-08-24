@@ -294,17 +294,22 @@ MonoBehaviour:
   body: {fileID: 497552994953656151}
   target: {fileID: 0}
   detectRadius: 10
+  enemyDetectRadius: 5
   targetMask:
     serializedVersion: 2
     m_Bits: 8
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 64
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
   sightMask:
     serializedVersion: 2
     m_Bits: 72
   speed: 250
   move: 1
+  angleWeight: 0.65
 --- !u!58 &1769383781
 CircleCollider2D:
   m_ObjectHideFlags: 0
