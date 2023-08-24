@@ -403,7 +403,7 @@ public class CircleState : State
         //Debug.Log("Present " + body.name);
         Debug.DrawRay(gameObject.transform.position, crossNetDirection, Color.green);
         Debug.DrawRay(gameObject.transform.position, avoidEnemyDirection, Color.cyan * 5);
-        netVector = crossNetDirection + avoidEnemyDirection;
+        netVector =avoidEnemyDirection;
         return netVector.normalized;
         
         
