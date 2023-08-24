@@ -146,7 +146,7 @@ public class CircleState : State
         if (avoidEnemyDirections != null)
         {
             
-            
+            /*
             for (int i = 0; i < crossDirectionArrayWeights.Length; i++)
             {
                 Gizmos.color = Color.white;
@@ -154,6 +154,7 @@ public class CircleState : State
                 Gizmos.color = Color.red;
                 //Gizmos.DrawRay(gameObject.transform.position, MoreDirections.SixteenDirections[i] * avoidEnemyDirections[i] * 5);
             }
+            */
         }
         if(avoidEnemyDirection != null)
         {
@@ -308,11 +309,12 @@ public class CircleState : State
         for (int i = 0; i < 16; i++)
         {
             netDirection += MoreDirections.SixteenDirections[i] * netInterest[i];
+            
         }
         
-
+        
         Debug.DrawRay(body.transform.position, targetDirection, Color.cyan);
-        Vector2 crossNetDirection = Vector3.Cross(targetDirection, Vector3.forward); // has magnitude of 1
+        Vector2 crossNetDirection = Vector3.Cross(netDirection, Vector3.forward); // has magnitude of 1
         crossNetDirection = crossNetDirection.normalized;
         //Debug.Log(netDirection.magnitude);
         if (reflect)
@@ -325,15 +327,23 @@ public class CircleState : State
         Vector2 netEnemyDirection = Vector2.zero;
         crossDirectionArrayWeights = new float[16];
         float crossAndEnemyDirectionDot = 0;
-        
+        float[] crossEnemydotArray = new float[16];
+        float[] crossInterestDotArray = new float[16];
+        float[] netCrossArray = new float[16];
+        Vector2 decidedDirection = Vector2.zero;
         if (enemyPresent)
         {
             
-            for (int i = 0; i < avoidEnemyDirections.Length; i++)
+            for (int i = 0; i < MoreDirections.SixteenDirections.Count; i++)
             {
-                netEnemyDirection += MoreDirections.SixteenDirections[i] * avoidEnemyDirections[i];
+                crossInterestDotArray[i] = Vector2.Dot(crossNetDirection, MoreDirections.SixteenDirections[i]);
+                netCrossArray[i] = Mathf.Clamp01(crossInterestDotArray[i] - avoidEnemyDirections[i]);
+                decidedDirection += netCrossArray[i] * MoreDirections.SixteenDirections[i];
+                Debug.DrawRay(gameObject.transform.position, crossInterestDotArray[i] * MoreDirections.SixteenDirections[i] * 5, Color.cyan);
+                Debug.DrawRay(gameObject.transform.position, avoidEnemyDirections[i] * MoreDirections.SixteenDirections[i] * 5, Color.red);
+                
             }
-
+            Debug.DrawRay(gameObject.transform.position, decidedDirection, Color.white);
             float avoidEnemyWeight = 0f;
             for (int i = 0; i < MoreDirections.SixteenDirections.Count; i++)
             {
