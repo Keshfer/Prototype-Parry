@@ -326,11 +326,11 @@ public class CircleState : State
         avoidEnemyDirection = Vector2.zero;
         Vector2 netEnemyDirection = Vector2.zero;
         crossDirectionArrayWeights = new float[16];
-        float crossAndEnemyDirectionDot = 0;
         float[] crossEnemydotArray = new float[16];
         float[] crossInterestDotArray = new float[16];
         float[] netCrossArray = new float[16];
         Vector2 decidedDirection = Vector2.zero;
+        Vector2 netVector;
         if (enemyPresent)
         {
             
@@ -339,11 +339,11 @@ public class CircleState : State
                 crossInterestDotArray[i] = Vector2.Dot(crossNetDirection, MoreDirections.SixteenDirections[i]);
                 netCrossArray[i] = Mathf.Clamp01(crossInterestDotArray[i] - avoidEnemyDirections[i]);
                 decidedDirection += netCrossArray[i] * MoreDirections.SixteenDirections[i];
-                Debug.DrawRay(gameObject.transform.position, crossInterestDotArray[i] * MoreDirections.SixteenDirections[i] * 5, Color.cyan);
-                Debug.DrawRay(gameObject.transform.position, avoidEnemyDirections[i] * MoreDirections.SixteenDirections[i] * 5, Color.red);
-                
+                //Debug.DrawRay(gameObject.transform.position, crossInterestDotArray[i] * MoreDirections.SixteenDirections[i] * 5, Color.cyan);
+                //Debug.DrawRay(gameObject.transform.position, avoidEnemyDirections[i] * MoreDirections.SixteenDirections[i] * 5, Color.red);
+                Debug.DrawRay(gameObject.transform.position, netCrossArray[i] * MoreDirections.SixteenDirections[i] * 5, Color.white);
             }
-            Debug.DrawRay(gameObject.transform.position, decidedDirection, Color.white);
+            /*
             float avoidEnemyWeight = 0f;
             for (int i = 0; i < MoreDirections.SixteenDirections.Count; i++)
             {
@@ -375,6 +375,11 @@ public class CircleState : State
             //Debug.Log("Chosen avoidEnemyWeight: " + avoidEnemyWeight);
             crossAndEnemyDirectionDot = Vector2.Dot(crossNetDirection, avoidEnemyDirection);
             //Debug.Log("crossAndEnemyDirectionDot: " + crossAndEnemyDirectionDot + " " + body.name);
+            */
+            netVector = decidedDirection;
+        } else
+        {
+            netVector = crossNetDirection;
         }
         
         //If any of the 16 directions are greater than the number in the if statement, switch the crossNetDirection
@@ -395,8 +400,9 @@ public class CircleState : State
 
             
         }
+
+        /*
         
-        Vector2 netVector;
         //If the angle between the crossNetDirection and the avoidEnemyDirection is near a right angle or obtuse,
         //ignore avoidEnemyDirection
         //Debug.Log(enemyPresent + " " + body.name);
@@ -414,8 +420,9 @@ public class CircleState : State
         Debug.DrawRay(gameObject.transform.position, crossNetDirection, Color.green);
         Debug.DrawRay(gameObject.transform.position, avoidEnemyDirection, Color.cyan * 5);
         netVector =avoidEnemyDirection;
+        */
+        Debug.DrawRay(gameObject.transform.position, crossNetDirection, Color.green * 5);
         return netVector.normalized;
-        
         
     }
     //reflects the cross product calculations along the target vector line
