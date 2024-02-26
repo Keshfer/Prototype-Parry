@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &892601580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 892601581}
+  - component: {fileID: 892601582}
+  m_Layer: 7
+  m_Name: AttackState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &892601581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892601580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 497552994953656145}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &892601582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892601580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b11f19c29ab53459d9f327f731fd8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0}
+  nextState: {fileID: 497552995423513149}
+  flyProjectile: {fileID: 2220401212599633999, guid: 6b2ef1c547848e54287fe2822bfa240a, type: 3}
 --- !u!1 &497552994953656151
 GameObject:
   m_ObjectHideFlags: 0
@@ -15,6 +61,7 @@ GameObject:
   - component: {fileID: 497552994953656149}
   - component: {fileID: 497552994953656150}
   - component: {fileID: 497552994953656144}
+  - component: {fileID: 334874262}
   m_Layer: 7
   m_Name: Fly
   m_TagString: Enemy
@@ -36,6 +83,7 @@ Transform:
   - {fileID: 497552995423513150}
   - {fileID: 497552995403929451}
   - {fileID: 497552995842418879}
+  - {fileID: 892601581}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -118,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0af783eb6e0494e954905a19f13824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: {fileID: 497552995423513149}
+  currentState: {fileID: 497552995403929450}
 --- !u!114 &497552994953656149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,6 +217,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &334874262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497552994953656151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09c5c6147db0e1f4aaee2a30b41bb993, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 497552994953656151}
 --- !u!1 &497552995403929452
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,7 +278,7 @@ MonoBehaviour:
   nextState: {fileID: 497552995423513149}
   body: {fileID: 497552994953656151}
   target: {fileID: 0}
-  detectRadius: 10
+  detectRadius: 20
   targetMask:
     serializedVersion: 2
     m_Bits: 8
@@ -290,7 +351,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
-  nextState: {fileID: 0}
+  nextState: {fileID: 892601582}
+  previousState: {fileID: 497552995403929450}
   body: {fileID: 497552994953656151}
   target: {fileID: 0}
   detectRadius: 10
@@ -307,7 +369,7 @@ MonoBehaviour:
   sightMask:
     serializedVersion: 2
     m_Bits: 72
-  speed: 250
+  speed: 50
   move: 1
   angleWeight: 0.65
 --- !u!58 &1769383781

@@ -92,7 +92,10 @@ public class FlyFollowState : State
             Gizmos.color = Color.red;
             foreach (Collider2D obstacle in obstacleArray)
             {
-                Gizmos.DrawSphere(obstacle.transform.position, 0.5f);
+                if (!(obstacle.gameObject.Equals(body)))
+                {
+                    Gizmos.DrawSphere(obstacle.transform.position, 0.5f);
+                }
             }
         }
         if(targetCachedPosition != null)
@@ -141,30 +144,34 @@ public class FlyFollowState : State
         Vector2 position2D = new Vector2(body.transform.position.x, body.transform.position.y);
         foreach(Collider2D thingCollider in array)
         {
-            Vector2 directionToObject = thingCollider.ClosestPoint(body.transform.position) - position2D;
-            float distanceToObject = directionToObject.magnitude;
-            float weight;
-            
-            if(distanceToObject <= colliderSize) // prevents being too close to obstacle
+            if (!(thingCollider.gameObject.Equals(body)))
             {
-                //Debug.Log("weight 1");
-                weight = 1;
-            } else
-            {
-                weight = (detectRadius - distanceToObject) / detectRadius; // less than 1
-            }
-            
+                Vector2 directionToObject = thingCollider.ClosestPoint(body.transform.position) - position2D;
+                float distanceToObject = directionToObject.magnitude;
+                float weight;
 
-            Vector2 directionToObjectNormalized = directionToObject.normalized;
-            for(int i = 0; i < Directions.EightDirections.Count; i++)
-            {
-                float result = Vector2.Dot(directionToObjectNormalized, Directions.EightDirections[i]);
-                float finalWeightValue = result * weight;
-                //Debug.Log(result);
-                //replace weight value in i slot if new weight value is higher. Sometimes there are two colliders in the same direction with one being closer.
-                if(finalWeightValue > returnArray[i])
+                if (distanceToObject <= colliderSize) // prevents being too close to obstacle
                 {
-                    returnArray[i] = finalWeightValue;
+                    //Debug.Log("weight 1");
+                    weight = 1;
+                }
+                else
+                {
+                    weight = (detectRadius - distanceToObject) / detectRadius; // less than 1
+                }
+
+
+                Vector2 directionToObjectNormalized = directionToObject.normalized;
+                for (int i = 0; i < Directions.EightDirections.Count; i++)
+                {
+                    float result = Vector2.Dot(directionToObjectNormalized, Directions.EightDirections[i]);
+                    float finalWeightValue = result * weight;
+                    //Debug.Log(result);
+                    //replace weight value in i slot if new weight value is higher. Sometimes there are two colliders in the same direction with one being closer.
+                    if (finalWeightValue > returnArray[i])
+                    {
+                        returnArray[i] = finalWeightValue;
+                    }
                 }
             }
         }

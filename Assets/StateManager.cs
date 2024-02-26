@@ -6,7 +6,7 @@ public class StateManager : MonoBehaviour
 {
     public State currentState;
 
-    private void Update()
+    private void FixedUpdate()
     {
         RunStateMachine();
     }

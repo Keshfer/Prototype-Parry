@@ -5,6 +5,7 @@ using UnityEngine;
 public class CircleState : State
 {
     public State nextState;
+    public State previousState;
     private FaceTarget faceTargetScript;
     public GameObject body;
     private Rigidbody2D bodyRB;
@@ -19,6 +20,7 @@ public class CircleState : State
     private Collider2D[] enemyArray;
     private Collider2D targetCollider;
     private bool coroutineRunning;
+    private bool attackCooldown;
     private float colliderSize;
     private float[] avoidWeight;
     private float[] avoidDirections;
@@ -44,6 +46,7 @@ public class CircleState : State
     }
     public override State RunCurrentState()
     {
+        
         Vector2 targetDirection;
 
         if (!coroutineRunning)
@@ -64,10 +67,11 @@ public class CircleState : State
                     targetCachedPosition = targetCollider.ClosestPoint(body.transform.position);
                     
                 }
-                else
-                {
-                    
-                }
+                
+            } else
+            {
+                Debug.Log("Follow " + body.name);
+                return previousState;
             }
             avoidWeight = new float[16];
             if (obstacleArray != null)
@@ -89,7 +93,18 @@ public class CircleState : State
         }
         if (move)
         {
-            bodyRB.velocity = moveDirection * speed * Time.deltaTime;
+            bodyRB.velocity = moveDirection * speed * Time.fixedDeltaTime;
+            
+        }
+        if (!attackCooldown)
+        {
+            int randomAttack = Random.Range(0, 3);
+            Debug.Log(randomAttack);
+            if (randomAttack == 1)
+            {
+                return nextState;
+            }
+            StartCoroutine("AttackWait");
         }
         return this;
     }
@@ -168,6 +183,12 @@ public class CircleState : State
         coroutineRunning = true;
         yield return new WaitForSeconds(0.02f);
         coroutineRunning = false;
+    }
+    private IEnumerator AttackWait()
+    {
+        attackCooldown = true;
+        yield return new WaitForSeconds(1f);
+        attackCooldown = false;
     }
 
     private float[] CalculateWeight(Collider2D[] array)
